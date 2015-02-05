@@ -1,0 +1,36 @@
+
+
+-----------
+e = e_1 + e_2 - 1023
+m_1 = 1+(m_1>>1)
+m_2 = 1+(m_2>>1)
+m = 0
+-----------
+controllo overflow di e
+-----------
+while(m_2 != 0)
+----------
+        if(m_2[0] != 0)
+                m = m + m_1
+        m_1 = m_1 << 1;
+        m_2 = m_2 >> 1;
+----------
+while(m.range(63, 53) != 0 && m[52] != 1) /*finchè non è normalizzato*/
+        m = m + m[0]
+----------
+        m = m >> 1; 
+        if(e != max_e)
+                e = e + 1;
+        else
+            overflow;
+---------
+if( e < min_e)
+        underflow
+tolgo l'1 aggiunto
+
+if(s_1 == s_2)
+        s = 0;
+else
+        s = 1;
+
+        

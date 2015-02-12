@@ -30,7 +30,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
       //reset state
       case Reset_ST:
       
-        cout << "ST_reset" << endl;
+        //cout << "ST_reset" << endl;
         
         result_port.write('0');
         result_isready.write('0');
@@ -42,7 +42,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //initialization state
       case ST_0:
-        cout << "ST_0" << endl;
+        //cout << "ST_0" << endl;
         
         result_port.write('0');
         result_isready.write('0');
@@ -72,18 +72,18 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //take the numbers
       case ST_1:
-        cout << "ST_1" << endl;
+        //cout << "ST_1" << endl;
       
         number1_tmp = number1_port.read();
         number2_tmp = number2_port.read();
         
-        cout << "n1 = " << number1_tmp.to_string() << endl;
-        cout << "n2 = " << number2_tmp.to_string() << endl;
+        //cout << "n1 = " << number1_tmp.to_string() << endl;
+        //cout << "n2 = " << number2_tmp.to_string() << endl;
         break;
         
       //divide numbers' parts into s e m
       case ST_2:
-        cout << "ST_2" << endl;
+        //cout << "ST_2" << endl;
       
         m1 = number1_tmp.range(51, 0);
         m2 = number2_tmp.range(51, 0);
@@ -100,60 +100,60 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //sum the exponents
       case ST_3:
-        cout << "ST_3" << endl;
+        /*cout << "ST_3" << endl;
       
         cout << "m1 = " << m1 << " (" << m1.to_uint() << ")"<< endl;
         cout << "m2 = " << m2 << " (" << m2.to_uint() << ")"<< endl;
         cout << "e1 = " << e1 << " (" << e1.to_uint() << ")"<< endl;
         cout << "e2 = " << e2 << " (" << e2.to_uint() << ")"<< endl;
         cout << "s1 = " << s1 << endl;
-        cout << "s2 = " << s2 << endl;
+        cout << "s2 = " << s2 << endl;*/
       
         e = static_cast< sc_uint<11> >( e1 ) + static_cast< sc_uint<11> >( e2 );
         break;
         
       //subtract the bias
       case ST_4:
-        cout << "ST_4" << endl;
+        //cout << "ST_4" << endl;
 
-        cout << "e_sum = " << e << " (" << e.to_uint() << ")"<< endl;
+        //cout << "e_sum = " << e << " (" << e.to_uint() << ")"<< endl;
         e = static_cast< sc_uint<64> >( e ) - 1023;
         break;
         
       //check exp overflow
       case ST_5:
-        cout << "ST_5" << endl;
+        //cout << "ST_5" << endl;
 
-        cout << "e_!bias = " << e << " (" << e.to_uint() << ")"<< endl;
+        //cout << "e_!bias = " << e << " (" << e.to_uint() << ")"<< endl;
         if( static_cast< sc_uint<64> > (e).range(63, 11) != 0 )
           overflow.write(true);
         break;
         
       //multiplication of significand .1: check if finished
       case ST_6:
-        cout << "ST_6" << endl;
+        //cout << "ST_6" << endl;
 
         if(static_cast< sc_uint<53> > ( m2 ) == 0) {
-          cout << "end multiplication of significands" << endl;
+          //cout << "end multiplication of significands" << endl;
           stop_m_mult.write(true);
         } else {
-          cout << "continue multiplication of significands" << endl;
+          //cout << "continue multiplication of significands" << endl;
           stop_m_mult.write(false);
         }
-        cout << "m1 = " << m1 << " (" << static_cast< sc_biguint<128> >( m1 ) << ")"<< endl; 
+        /*cout << "m1 = " << m1 << " (" << static_cast< sc_biguint<128> >( m1 ) << ")"<< endl; 
         cout << "m2 = " << m2 << " (" << static_cast< sc_biguint<128> >( m2 ) << ")"<< endl; 
-        cout << "m = " << m << " (" << static_cast< sc_biguint<128> >( m ) << ")"<< endl; 
+        cout << "m = " << m << " (" << static_cast< sc_biguint<128> >( m ) << ")"<< endl; */
         break;   
 
 
       //multiplication of significand .2: multiplication
       case ST_7:
-        cout << "ST_7" << endl;
+        //cout << "ST_7" << endl;
         
-        cout << "stop_m_mult = " << stop_m_mult.read() << endl;
+        //cout << "stop_m_mult = " << stop_m_mult.read() << endl;
 
         if(m2[0] != '0') {
-          cout << "sum m1 to m" << endl;
+          //cout << "sum m1 to m" << endl;
           m = static_cast< sc_biguint<128> >( m ) + static_cast< sc_biguint<128> >( m1 );
         }   
         
@@ -164,31 +164,31 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //normalization .1
       case ST_8:
-        cout << "ST_8" << endl;
+        //cout << "ST_8" << endl;
         
         if(m.range(127, 53) != 0) {
-          cout << "not normalized yet" << endl;
+          //cout << "not normalized yet" << endl;
           normalized.write(false);
         } else {
-          cout << "normalized!" << endl;
+          //cout << "normalized!" << endl;
           normalized.write(true);
         }
         
         if(e.range(10, 0) == "11111111111") {
-          cout << "overflow" << endl;
+          //cout << "overflow" << endl;
           overflow.write(true);
         } else {
           overflow.write(false);
         }
-        cout << "m.range(127, 53) = " << m.range(127, 53) << endl;
+        /*cout << "m.range(127, 53) = " << m.range(127, 53) << endl;
         cout << "m.range(52, 0) = " << m.range(52, 0) << endl;
-        cout << "e = " << e << " (" << e.to_uint() << ")"<< endl;
+        cout << "e = " << e << " (" << e.to_uint() << ")"<< endl;*/
         
         break;
         
       //normalization .2
       case ST_9:
-        cout << "ST_9" << endl;
+        //cout << "ST_9" << endl;
         if(normalized.read() == false) {
         
           r[0] = m[0];
@@ -214,16 +214,16 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //calculate sign
       case ST_10:
-        cout << "ST_10" << endl;
+        //cout << "ST_10" << endl;
         e = static_cast< sc_uint<64> >( e ) - 52;
         s = s1 ^ s2;
         break;
         
       //compose result
       case ST_11:
-        cout << "ST_11" << endl;
+        //cout << "ST_11" << endl;
         
-        cout << "e = " << e << " (" << e.to_uint() << ")"<< endl;
+        //cout << "e = " << e << " (" << e.to_uint() << ")"<< endl;
         
         result.range(63, 63) = s;
         result.range(62, 52) = e.range(10, 0);
@@ -231,11 +231,11 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         break;
         
       case ST_100:
-        cout << "ST_100" << endl;
+        //cout << "ST_100" << endl;
        
-        cout << "result = " << result << endl;
+        //cout << "result = " << result << endl;
       
-        cout << "exp overflow = " << overflow.read() << endl;
+        //cout << "exp overflow = " << overflow.read() << endl;
         result_isready.write(1);
         result_port.write( result );
         break;

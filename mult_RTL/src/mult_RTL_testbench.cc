@@ -46,7 +46,7 @@ void mult_RTL_testbench::run()
   static sc_lv<64> proof_result_bin;
   bool right_multiplication = true;
 
-  cout<<"Calculate the multiplication of 1 number!"<<endl;
+  cout<<"Calculate the multiplication of 128 number!"<<endl;
   srand(time(NULL));
   for (int i = 1; i <= 128; i++){
     
@@ -64,7 +64,7 @@ void mult_RTL_testbench::run()
     proof_result = n1 * n2;
     proof_result_bin = doubleToLogicVector(proof_result);
 
-    cout<<"\tThe multiplication between "<< n1 << " and " << n2 << endl;
+    //cout<<"\tThe multiplication between "<< n1 << " and " << n2 << endl;
 
     reset_to_RTL.write(1);
     p_Out_data1.write(temp_data1_in);
@@ -76,38 +76,39 @@ void mult_RTL_testbench::run()
     while(p_In_enable.read() != 1) wait();
     result_lv = p_In_data.read();
     result = logicVectorToDouble(result_lv);
-    cout << "s: " << result_lv.range(63, 63) << endl;
-    cout << "e: " << result_lv.range(62, 52) <<  endl;
-    cout << "m: " << result_lv.range(51, 0) <<  endl;
-    cout<<"\tThe multiplication between "<< n1 << " and " << n2 << endl;
-    cout << "\t is: ";
-    printf("%.100f\n", result);
+    //cout << "s: " << result_lv.range(63, 63) << endl;
+    //cout << "e: " << result_lv.range(62, 52) <<  endl;
+    //cout << "m: " << result_lv.range(51, 0) <<  endl;
+    cout<<"The multiplication between "<< n1 << " and " << n2 << endl;
+    cout << "\tis: ";
+    printf("%.50f\n", result);
 
     
     
-    cout << "result prooof is:" << endl;
-    printf("%.100f\n", proof_result);
-    cout << proof_result_bin << endl;
+    //cout << "result prooof is:" << endl;
+    //printf("%.100f\n", proof_result);
+    //cout << proof_result_bin << endl;
     
     
-    cout << "s: " << proof_result_bin.range(63, 63) << endl;
-    cout << "e: " << proof_result_bin.range(62, 52) <<  endl;
-    cout << "m: " << proof_result_bin.range(51, 0) <<  endl;
+    //cout << "s: " << proof_result_bin.range(63, 63) << endl;
+    //cout << "e: " << proof_result_bin.range(62, 52) <<  endl;
+    //cout << "m: " << proof_result_bin.range(51, 0) <<  endl;
     
     if(proof_result != result) {
-      cout << "multiplication was wrong" << endl;
+      cout << "\tmultiplication was wrong" << endl;
       right_multiplication = false;
     }else {
-      cout << "multiplication was right" << endl;
+      cout << "\tmultiplication was right" << endl;
     }
-    cout << "\n\n************************************************************************************\n\n" << endl;
+    
 
   }
+  cout << "\n\n************************************************************************************\n\n" << endl;
   
   if(right_multiplication)
-    cout << "\n\n\n\n\nAll multiplications were right!!" << endl;
+    cout << "\nAll multiplications were right!!" << endl;
   else
-    cout << "\n\n\n\n\nAt least one multiplication went wrong!!" << endl;
+    cout << "\nAt least one multiplication went wrong!!" << endl;
 
   reset_to_RTL.write(0);
   p_Out_enable.write(0);

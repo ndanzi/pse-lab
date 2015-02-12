@@ -1,7 +1,7 @@
 #include "mult_RTL.hh"
 
 void mult_RTL :: elaborate_MULT_FSM(void){
-
+  cout<<"\t"<<sc_time_stamp()<<" - root: MULT_FSM"<<endl;
   static sc_lv<11>   e1;
   static sc_lv<11>   e2;
   static sc_lv<64>   e;
@@ -19,6 +19,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
 
 
   if (reset.read() == 0){
+    cout<< "\t" <<sc_time_stamp()<< " - mult: reset" << endl;
     STATUS = Reset_ST;
   }
   else if (clk.read() == 1) {
@@ -29,8 +30,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
     switch(STATUS){
       //reset state
       case Reset_ST:
-      
-        //cout << "ST_reset" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_reset" << endl;
         
         result_port.write('0');
         result_isready.write('0');
@@ -42,7 +42,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //initialization state
       case ST_0:
-        //cout << "ST_0" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_0" << endl;
         
         result_port.write('0');
         result_isready.write('0');
@@ -72,7 +72,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //take the numbers
       case ST_1:
-        //cout << "ST_1" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_1" << endl;
       
         number1_tmp = number1_port.read();
         number2_tmp = number2_port.read();
@@ -83,7 +83,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //divide numbers' parts into s e m
       case ST_2:
-        //cout << "ST_2" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_2" << endl;
       
         m1 = number1_tmp.range(51, 0);
         m2 = number2_tmp.range(51, 0);
@@ -100,9 +100,9 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //sum the exponents
       case ST_3:
-        /*cout << "ST_3" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_3" << endl;
       
-        cout << "m1 = " << m1 << " (" << m1.to_uint() << ")"<< endl;
+        /*cout << "m1 = " << m1 << " (" << m1.to_uint() << ")"<< endl;
         cout << "m2 = " << m2 << " (" << m2.to_uint() << ")"<< endl;
         cout << "e1 = " << e1 << " (" << e1.to_uint() << ")"<< endl;
         cout << "e2 = " << e2 << " (" << e2.to_uint() << ")"<< endl;
@@ -114,7 +114,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //subtract the bias
       case ST_4:
-        //cout << "ST_4" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_4" << endl;
 
         //cout << "e_sum = " << e << " (" << e.to_uint() << ")"<< endl;
         e = static_cast< sc_uint<64> >( e ) - 1023;
@@ -122,7 +122,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //check exp overflow
       case ST_5:
-        //cout << "ST_5" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_5" << endl;
 
         //cout << "e_!bias = " << e << " (" << e.to_uint() << ")"<< endl;
         if( static_cast< sc_uint<64> > (e).range(63, 11) != 0 )
@@ -131,7 +131,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //multiplication of significand .1: check if finished
       case ST_6:
-        //cout << "ST_6" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_6" << endl;
 
         if(static_cast< sc_uint<53> > ( m2 ) == 0) {
           //cout << "end multiplication of significands" << endl;
@@ -148,7 +148,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
 
       //multiplication of significand .2: multiplication
       case ST_7:
-        //cout << "ST_7" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_7" << endl;
         
         //cout << "stop_m_mult = " << stop_m_mult.read() << endl;
 
@@ -164,7 +164,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //normalization .1
       case ST_8:
-        //cout << "ST_8" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_8" << endl;
         
         if(m.range(127, 53) != 0) {
           //cout << "not normalized yet" << endl;
@@ -188,7 +188,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //normalization .2
       case ST_9:
-        //cout << "ST_9" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_9" << endl;
         if(normalized.read() == false) {
         
           r[0] = m[0];
@@ -214,14 +214,14 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         
       //calculate sign
       case ST_10:
-        //cout << "ST_10" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_10" << endl;
         e = static_cast< sc_uint<64> >( e ) - 52;
         s = s1 ^ s2;
         break;
         
       //compose result
       case ST_11:
-        //cout << "ST_11" << endl;
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_11" << endl;
         
         //cout << "e = " << e << " (" << e.to_uint() << ")"<< endl;
         
@@ -230,8 +230,8 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         result.range(51, 0) = m.range(51, 0);
         break;
         
-      case ST_100:
-        //cout << "ST_100" << endl;
+      case ST_12:
+        cout<< "\t" <<sc_time_stamp()<< "mult: ST_12" << endl;
        
         //cout << "result = " << result << endl;
       
@@ -247,7 +247,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
 
 
 void mult_RTL :: elaborate_MULT(void){
-
+  cout<<"\t"<<sc_time_stamp()<<" - mult: MULT"<<endl;
 
   NEXT_STATUS = STATUS;
 
@@ -317,10 +317,10 @@ void mult_RTL :: elaborate_MULT(void){
       break;
       
     case ST_11:
-      NEXT_STATUS = ST_100;
+      NEXT_STATUS = ST_12;
       break;
       
-    case ST_100:
+    case ST_12:
       NEXT_STATUS = ST_0;
       break;
 

@@ -15,7 +15,7 @@ SC_MODULE(mult_RTL){
   sc_in<bool>           reset;
   sc_in< sc_dt::sc_logic > clk;
 
-  typedef enum {Reset_ST, ST_0, ST_1, ST_2, ST_3, ST_4, ST_5, ST_6, ST_7, ST_8, ST_9, ST_10, ST_11, ST_100} STATES;
+  typedef enum {Reset_ST, ST_0, ST_1, ST_2, ST_3, ST_4, ST_5, ST_6, ST_7, ST_8, ST_9, ST_10, ST_11, ST_12} STATES;
 
   sc_signal<STATES> STATUS, NEXT_STATUS;
   sc_signal<bool >	  overflow;

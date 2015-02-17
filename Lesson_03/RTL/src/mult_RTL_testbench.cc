@@ -48,18 +48,23 @@ void mult_RTL_testbench::run()
   static sc_lv<64> proof_result_bin;
   bool right_multiplication = true;
 
-  cout<<"Calculate the multiplication of 128 number!"<<endl;
+
+  cout<<"Reset the design!"<<endl;
+  reset_to_RTL.write(0);
+  p_Out_enable.write(0);
+  p_Out_data1.write(0);
+  p_Out_data2.write(0);
+  cout<< "\t" <<sc_time_stamp()<< " - tb: reset " <<endl;
+  wait(5);
+  cout<< "\t" <<sc_time_stamp()<< " - tb: after wait(5) " <<endl;
+
+  //cout<<"Calculate the multiplication of 128 number!"<<endl;
   srand(time(NULL));
   //for (int i = 1; i <= 128; i++){
     
     n1 = (rand() % 256000 - 128000) / 1000.0;
     n2 = (rand() % 256000 - 128000) / 1000.0;
-    //n1 = 0.5;
-    //n2 = 0.7;
-    //int max = std::numeric_limits<int>::max();
-    //double min std::numeric_limits<float>::min();
-    //n1 = (rand() % max - (max/2)) / 1000.0;
-    //n2 = (rand() % max - (max/2)) / 1000.0;
+
     
     temp_data1_in = doubleToLogicVector(n1);
     temp_data2_in = doubleToLogicVector(n2);
@@ -73,11 +78,12 @@ void mult_RTL_testbench::run()
     reset_to_RTL.write(1);
     p_Out_data1.write(temp_data1_in);
     p_Out_data2.write(temp_data2_in);
-
     p_Out_enable.write(1);
     wait();
 
     cout<< "\t" <<sc_time_stamp()<< " - tb: wait result" << endl;
+
+
 
     while(p_In_enable.read() != 1) wait();
     result_lv = p_In_data.read();

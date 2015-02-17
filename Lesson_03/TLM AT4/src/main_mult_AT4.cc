@@ -1,19 +1,19 @@
-#include "root_AT4.hh"
-#include "root_AT4_testbench.hh"
+#include "mult_AT4.hh"
+#include "mult_AT4_testbench.hh"
 
-class root_top : public sc_module
+class mult_top : public sc_module
 {
 
 private:
 
-  root_AT4  m_target;
+  mult_AT4  m_target;
 
-  root_AT4_testbench m_initiator;
+  mult_AT4_testbench m_initiator;
 
 
 public:
 
-  root_top(sc_module_name name)
+  mult_top(sc_module_name name)
     : sc_module(name)
     , m_target("target")
     , m_initiator("initiator")
@@ -26,7 +26,7 @@ public:
 int main(int argc, char* argv[])
 {
 
-  root_top top("top");
+  mult_top top("top");
 
   sc_start();
 

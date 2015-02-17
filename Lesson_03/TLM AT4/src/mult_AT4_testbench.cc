@@ -1,25 +1,45 @@
-#include "root_AT4_testbench.hh"
+#include "mult_AT4_testbench.hh"
+
+sc_dt::sc_lv< 64 > doubleToLogicVector( double d )
+{
+    uint64_t tmp = *reinterpret_cast< uint64_t * >(&d);
+    return sc_lv<64L>(tmp);
+}
+
+double logicVectorToDouble( sc_dt::sc_lv< 64 > v )
+{
+    uint64_t tmp = v.to_uint64();
+    return (*reinterpret_cast< double * >(&tmp));
+}
 
 // initiator process
-void root_AT4_testbench::run()
+void mult_AT4_testbench::run()
 {
   sc_time local_time = SC_ZERO_TIME;
-  iostruct root_packet;
+  iostruct mult_packet;
   tlm::tlm_generic_payload payload;	
+  double n1, n2, result_mult;	
 
-  // send one random number - write invocation
-  root_packet.datain = (rand() % 256);
-  cout<<"[TB:] Calculating the square root of "<<root_packet.datain<<endl;
+  srand(time(NULL));
+  // send two random numbers - write invocation
+  n1 = (rand() % 256000 - 128000) / 1000.0;
+  n2 = (rand() % 256000 - 128000) / 1000.0;
+  mult_packet.number1 = doubleToLogicVector(n1);
+  mult_packet.number2 = doubleToLogicVector(n2);
+  cout << "\tnumber1:\t" << n1 << endl;
+  cout << "\tnumber2:\t" << n2 << endl;
+
+  cout<<"[TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
   
   // set phase: begin request
   tlm::tlm_phase phase = tlm::BEGIN_REQ;
   
   // update payload
   payload.set_address(0);
-  payload.set_data_ptr((unsigned char*) &root_packet);
+  payload.set_data_ptr((unsigned char*) &mult_packet);
   payload.set_write();
 
-  cout<<"[TB:] Invoking the nb_transport_fw primitive of root - write"<<endl;
+  cout<<"[TB:] Invoking the nb_transport_fw primitive of mult - write"<<endl;
   tlm::tlm_sync_enum result = initiator_socket->nb_transport_fw(payload, phase, local_time);  // invoke the transport primitive
                                                                                               // pass also the phase
 
@@ -49,10 +69,10 @@ void root_AT4_testbench::run()
 
   phase = tlm::BEGIN_REQ;
   payload.set_address(0);
-  payload.set_data_ptr((unsigned char*) &root_packet);
+  payload.set_data_ptr((unsigned char*) &mult_packet);
   payload.set_read();
   
-  cout<<"[TB:] Invoking the nb_transport_fw primitive of root - read"<<endl;
+  cout<<"[TB:] Invoking the nb_transport_fw primitive of mult - read"<<endl;
   result = initiator_socket->nb_transport_fw(payload, phase, local_time);
 
   if (result == tlm::TLM_COMPLETED) {
@@ -75,14 +95,15 @@ void root_AT4_testbench::run()
 
   if(payload.get_response_status() == tlm::TLM_OK_RESPONSE){
     cout<<"[TB:] TLM protocol correctly implemented"<<endl;
-    cout<<"[TB:] Result is: " << root_packet.result << endl;
+    result_mult = logicVectorToDouble(mult_packet.result);
+    cout<<"[TB:] Result is: " << result_mult << endl;
   }
  
   sc_stop();
 }
 
 
-tlm::tlm_sync_enum root_AT4_testbench::nb_transport_bw(tlm::tlm_generic_payload &  trans, tlm::tlm_phase &  phase, sc_time &  t)
+tlm::tlm_sync_enum mult_AT4_testbench::nb_transport_bw(tlm::tlm_generic_payload &  trans, tlm::tlm_phase &  phase, sc_time &  t)
 {
   
   // If response_pending is true, then the initiator had made a request to the target
@@ -112,7 +133,7 @@ tlm::tlm_sync_enum root_AT4_testbench::nb_transport_bw(tlm::tlm_generic_payload 
 
 // constructor
 // initialize TLM socket and state that run is a thread
-root_AT4_testbench::root_AT4_testbench(sc_module_name name)
+mult_AT4_testbench::mult_AT4_testbench(sc_module_name name)
   : sc_module(name)
   , response_pending(false)
 {
@@ -126,7 +147,7 @@ root_AT4_testbench::root_AT4_testbench(sc_module_name name)
 
 // necessary to be compliant with the standard
 // not used here
-void root_AT4_testbench::invalidate_direct_mem_ptr(uint64 start_range, uint64 end_range)
+void mult_AT4_testbench::invalidate_direct_mem_ptr(uint64 start_range, uint64 end_range)
 {
   
 }

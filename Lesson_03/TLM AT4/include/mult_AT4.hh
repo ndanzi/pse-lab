@@ -1,11 +1,11 @@
-#ifndef __root_AT4_HPP__
-#define __root_AT4_HPP__
+#ifndef __mult_AT4_HPP__
+#define __mult_AT4_HPP__
 
 #include <systemc.h>
 #include <tlm.h>
 #include "define_AT4.hh"
 
-class root_AT4
+class mult_AT4
   : public sc_module
   , public virtual tlm::tlm_fw_transport_if<>
 {
@@ -32,11 +32,11 @@ class root_AT4
   void IOPROCESS();
 
   // elaboration function
-  void root_function();
+  void mult_function();
   
-  SC_HAS_PROCESS(root_AT4);
+  SC_HAS_PROCESS(mult_AT4);
 
-  root_AT4(sc_module_name name_);
+  mult_AT4(sc_module_name name_);
   
 };
 

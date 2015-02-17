@@ -1,7 +1,7 @@
-#include "root_AT4.hh"
+#include "mult_AT4.hh"
 
 // transport function invoked by the initiator
-tlm::tlm_sync_enum root_AT4::nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_time& t)
+tlm::tlm_sync_enum mult_AT4::nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_time& t)
 {
   // If there is already a pending transaction, we refuse to
   // serve the request because something went wrong
@@ -17,8 +17,8 @@ tlm::tlm_sync_enum root_AT4::nb_transport_fw(tlm::tlm_generic_payload& trans, tl
     return tlm::TLM_COMPLETED;
   }
 
-  cout<<"\t\t[ROOT:] Received invocation of the nb_transport_fw primitive"<<endl;
-  cout<<"\t\t[ROOT:] Activating the IOPROCESS"<<endl;
+  cout<<"\t\t[MULT:] Received invocation of the nb_transport_fw primitive"<<endl;
+  cout<<"\t\t[MULT:] Activating the IOPROCESS"<<endl;
   pending_transaction = &trans; // download the payload
   ioDataStruct = *((iostruct*) trans.get_data_ptr()); // get the data
 
@@ -28,13 +28,13 @@ tlm::tlm_sync_enum root_AT4::nb_transport_fw(tlm::tlm_generic_payload& trans, tl
   io_event.notify();
   
   // return control 
-  cout<<"\t\t[ROOT:] End of the nb_transport_fw primitive"<<endl;
+  cout<<"\t\t[MULT:] End of the nb_transport_fw primitive"<<endl;
   return tlm::TLM_UPDATED;
   
 }
 
 
-void root_AT4::IOPROCESS()
+void mult_AT4::IOPROCESS()
 {
 
   sc_time timing_annotation;
@@ -43,7 +43,7 @@ void root_AT4::IOPROCESS()
     wait(io_event);
     // if I am here, then the initiator has invoked the forward transport primitive to issue a request 
     
-    cout<<"\t\t[ROOT:] IOPROCESS has been activated"<<endl;
+    cout<<"\t\t[MULT:] IOPROCESS has been activated"<<endl;
     
     // Wait 100ns to model the delay required to
     // process the request - simulate advamncement of time
@@ -51,13 +51,13 @@ void root_AT4::IOPROCESS()
     wait(100, SC_NS);    
 
     if (pending_transaction->is_write()) {
-      // write request: elaborate the square root and return
-      cout<<"\t\t[ROOT:] Invoking the root_function to calculate the square root"<<endl;
-      root_function();
+      // write request: elaborate the square mult and return
+      cout<<"\t\t[MULT:] Invoking the mult_function to calculate the product"<<endl;
+      mult_function();
     }
     
     // read transaction: return the result to the initiator
-    else cout<<"\t\t[ROOT:] Returning result: "<<ioDataStruct.result<<endl;
+    else cout<<"\t\t[MULT:] Returning result: "<<ioDataStruct.result<<endl;
     
     // transaction went on correctly
     pending_transaction->set_response_status(tlm::TLM_OK_RESPONSE);
@@ -76,15 +76,28 @@ void root_AT4::IOPROCESS()
 }
 
 // elaboration function
-void root_AT4:: root_function()
+void mult_AT4:: mult_function()
 {
-  cout<<"\t\t[ROOT:] Calculating root_function ... "<<endl;
-  ioDataStruct.result = sqrt((float)ioDataStruct.datain);
+  cout<<"\t\t[MULT:] Calculating mult_function ... "<<endl;
+  double n1, n2, result;
+   
+  uint64_t tmp;
+  //retrive number 1 and convert it to double
+  tmp = (ioDataStruct.number1).to_uint64();
+  n1 = *reinterpret_cast< double * >(&tmp);
+  //retrive number 2 and convert it to double
+  tmp = (ioDataStruct.number2).to_uint64();
+  n2 = *reinterpret_cast< double * >(&tmp);
+
+  //perform multiplication
+  result = n1 * n2;
+
+  ioDataStruct.result = *reinterpret_cast< uint64_t * >(&result);
 }
 
 // constructor 
 // initialize TLM socket and set ioprocess as a thread
-root_AT4::root_AT4(sc_module_name name_)
+mult_AT4::mult_AT4(sc_module_name name_)
 : sc_module(name_)
 , target_socket("target_socket")
 , pending_transaction(NULL)
@@ -99,17 +112,17 @@ root_AT4::root_AT4(sc_module_name name_)
 
 // necessary to be compliant with the standard
 // not used here
-void root_AT4::b_transport(tlm::tlm_generic_payload& trans, sc_time& t)
+void mult_AT4::b_transport(tlm::tlm_generic_payload& trans, sc_time& t)
 {
   
 }
 
-bool root_AT4::get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data)
+bool mult_AT4::get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data)
 {
   return false;
 }
 
-unsigned int root_AT4::transport_dbg(tlm::tlm_generic_payload& trans)
+unsigned int mult_AT4::transport_dbg(tlm::tlm_generic_payload& trans)
 {
   return 0;
 }

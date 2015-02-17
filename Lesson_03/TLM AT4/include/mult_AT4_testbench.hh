@@ -1,18 +1,18 @@
-#ifndef _root_AT4_TESTBENCH_H_
-#define _root_AT4_TESTBENCH_H_
+#ifndef _mult_AT4_TESTBENCH_H_
+#define _mult_AT4_TESTBENCH_H_
 
 #include <systemc.h>
 #include <tlm.h>
 #include "define_AT4.hh"
 
-class root_AT4_testbench
+class mult_AT4_testbench
   : public sc_module
   , public virtual tlm::tlm_bw_transport_if<>
 {
 
 private:
 
-  SC_HAS_PROCESS(root_AT4_testbench);
+  SC_HAS_PROCESS(mult_AT4_testbench);
 
   // necessary to be compliant with the standard
   // not used here
@@ -35,7 +35,7 @@ public:
   tlm::tlm_initiator_socket<> initiator_socket;
 
   // constructor
-  root_AT4_testbench(sc_module_name name);
+  mult_AT4_testbench(sc_module_name name);
 
 };
 

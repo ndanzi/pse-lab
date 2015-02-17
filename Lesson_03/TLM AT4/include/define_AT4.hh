@@ -4,8 +4,9 @@
 #include <systemc.h>
 
 struct iostruct {
-  sc_int<32> datain;
-  sc_int<32> result;
+  sc_lv<64> number1;
+  sc_lv<64> number2;
+  sc_lv<64> result;
 };
 
 #define ADDRESS_TYPE int

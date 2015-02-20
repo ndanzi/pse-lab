@@ -13,25 +13,26 @@ SYSTEMC_LIB = $(SYSTEMC_DIR)/lib-linux64
 CXX        = g++
 LD         = g++
 RM         = rm -rf
-CXXFLAGS   = -c -ansi
+CXXFLAGS   = -c
 
-EXECUTABLE=./bin/es4.x
+EXECUTABLE=./bin/lesson_06.x
 
 INCS =	-I $(SCAMS_INC) \
 		-I $(SYSTEMC_INC)\
 	-I./include/\
 	-I.
 
-LIBS =	-L $(SYSTEMC_LIB) \
-		-L $(SCAMS_LIB) \
-	 	-lsystemc-ams \
-	 	-lsystemc \
+LIBS =	$(SYSTEMC_LIB)/libsystemc.a \
+    -lpthread \
+		$(SCAMS_LIB)/libsystemc-ams.a \
+	 	#-lsystemc-ams \
+	 	#-lsystemc \
 	 	-lm \
 
 OBJS =     ./obj/testbench.o \
-	   ./obj/p_plant.o \
+	   ./obj/physical_plant.o \
 	   ./obj/controller.o \
-	   ./obj/controller_err.o \
+	   ./obj/controller_error.o \
 	   ./obj/main.o
 
 all: $(EXECUTABLE)
@@ -60,22 +61,21 @@ obj/controller.o: src/controller.cc
 	@echo Compiling $@
 	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
-obj/controller_err.o: src/controller_err.cc
+obj/controller_error.o: src/controller_error.cc
 	@echo Compiling $@
 	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
-obj/p_plant.o: src/p_plant.cc
+obj/physical_plant.o: src/physical_plant.cc
 	@echo Compiling $@
 	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
 
 
 clean:
-	@echo "Cleaning..."
 	@rm -rf obj/*.o
 	@rm -rf *.x
 	@rm -rf *.vcd
 	@rm -rf $(EXECUTABLE)
-	@echo "Done!"
+	@echo "Clean"
 
 .PHONY: all clean install

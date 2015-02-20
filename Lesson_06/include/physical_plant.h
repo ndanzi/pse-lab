@@ -17,7 +17,7 @@ public:
 	void initialize();
 	void processing ();
 
-	SCA_CTOR(p_plant)
+	SCA_CTOR(physical_plant)
 	{
 	}
 

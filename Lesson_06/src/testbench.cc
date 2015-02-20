@@ -3,7 +3,8 @@
 #include <iostream>
 #include <fstream>
 
-#define INPUT "inputs.txt"
+#define INPUT_FILE "inputs.txt"
+
 using namespace std;
 
 testbench::testbench(sc_module_name name_)
@@ -28,15 +29,20 @@ void testbench::clk_gen()
 void testbench::run()
 {
 
-    std::fstream myfile(INPUT, std::ios_base::in);
+    std::fstream myfile(INPUT_FILE, std::ios_base::in);
 
     double a;
 
-    cout << "\ttb: reading file "<< INPUT << endl;
+    cout << "\ttb: reading file "<< INPUT_FILE << endl;
+    if (!myfile)
+    {
+        cout << "\ttb: error!"<< endl;
+    }
     while (myfile >> a)
     {
+        cout << "\tb: start sending" << endl;
         number.write(a);
-        cout << "\ttb: sent " << a << "to Controller" << endl;
+        cout << "\ttb: sent " << a << " to Controller" << endl;
         wait();
     }
 

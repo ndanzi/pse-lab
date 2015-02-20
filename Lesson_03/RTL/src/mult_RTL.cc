@@ -20,6 +20,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
 
   if (reset.read() == 0){
     cout<< "\t" <<sc_time_stamp()<< " - mult: reset" << endl;
+    result_port.write(0);
     STATUS = Reset_ST;
   }
   else if (clk.read() == 1) {

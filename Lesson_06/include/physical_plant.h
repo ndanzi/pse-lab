@@ -24,9 +24,6 @@ public:
 private:
 
     
-   double fc;
-   double h0;
-
 	//funzione di trasferimento
 	sca_tdf::sca_ltf_nd ltf_nd;
 	sca_util::sca_vector<double> num, den; // numerator and denominator coefficients

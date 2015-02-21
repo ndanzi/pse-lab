@@ -40,7 +40,6 @@ void testbench::run()
     }
     while (myfile >> a)
     {
-        cout << "\tb: start sending" << endl;
         number.write(a);
         cout << "\ttb: sent " << a << " to Controller" << endl;
         wait();

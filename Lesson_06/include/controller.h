@@ -13,8 +13,6 @@ public:
 	sca_tdf::sca_out<double> k_out;
 	sca_tdf::sca_in<double> err_in;
 
-	double r_calc;
-	double y_calc;
 
 	double err_calc;
 	double err_calc_pre;
@@ -22,7 +20,6 @@ public:
 	double k_calc;
 	double k_calc_pre;
 
-	ofstream log;
 
 	void set_attributes ();
 	void initialize();

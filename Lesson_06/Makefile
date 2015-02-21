@@ -54,20 +54,17 @@ obj/main.o: src/main.cc
 
 
 obj/testbench.o: src/testbench.cc
-	@echo Compiling $@
-	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
+	#@echo Compiling $@
+	$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
 obj/controller.o: src/controller.cc
-	@echo Compiling $@
-	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
+	$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
 obj/controller_error.o: src/controller_error.cc
-	@echo Compiling $@
-	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
+	$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
 obj/physical_plant.o: src/physical_plant.cc
-	@echo Compiling $@
-	@$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
+	$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
 
 

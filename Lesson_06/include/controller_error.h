@@ -24,6 +24,7 @@ public:
 	double k_calc_pre;
 
 	ofstream log;
+	ofstream ref;
 
 	void set_attributes ();
 	void initialize();

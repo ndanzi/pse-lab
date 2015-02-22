@@ -25,6 +25,6 @@ void controller::processing (){
 	err_calc_pre = err_calc;
 
 	k_out.write(k_calc);
-  cout << "c: write " << k_calc << " on k_out" << endl;
+  //cout << "c: write " << k_calc << " on k_out" << endl;
 
 }

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#define INPUT_FILE "inputs.txt"
+#define INPUT_FILE "log/inputs.txt"
 
 using namespace std;
 
@@ -33,15 +33,15 @@ void testbench::run()
 
     double a;
 
-    cout << "\ttb: reading file "<< INPUT_FILE << endl;
+    //cout << "\ttb: reading file "<< INPUT_FILE << endl;
     if (!myfile)
     {
-        cout << "\ttb: error!"<< endl;
+        cout << "\ttb: error with input file!"<< endl;
     }
     while (myfile >> a)
     {
         number.write(a);
-        cout << "\ttb: sent " << a << " to Controller" << endl;
+        //cout << "\ttb: sent " << a << " to Controller" << endl;
         wait();
     }
 

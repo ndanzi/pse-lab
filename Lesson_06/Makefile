@@ -54,7 +54,6 @@ obj/main.o: src/main.cc
 
 
 obj/testbench.o: src/testbench.cc
-	#@echo Compiling $@
 	$(CXX) $(DEBUG) $(CXXFLAGS) $(INCS) -o $@ $<
 
 obj/controller.o: src/controller.cc

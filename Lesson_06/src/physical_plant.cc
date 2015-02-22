@@ -22,6 +22,6 @@ void physical_plant::processing (){
   double ltf_function;
   ltf_function = ltf_nd( num, den, k_input.read());
 	y_out.write( ltf_function );
-  cout << "p_plant: write " << ltf_function << " on y_out" << endl;
+  //cout << "p_plant: write " << ltf_function << " on y_out" << endl;
 
 }

@@ -20,7 +20,7 @@ void controller::processing (){
 
 	err_calc = err_in.read();
 
-	k_calc = k_calc_pre + (100 * (err_calc - err_calc_pre)) + (20.0 * err_calc);
+	k_calc = k_calc_pre + (100 * (err_calc - err_calc_pre)) + (get_timestep().to_seconds() * err_calc);
 	k_calc_pre = k_calc;
 	err_calc_pre = err_calc;
 

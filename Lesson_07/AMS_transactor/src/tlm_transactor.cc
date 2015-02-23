@@ -63,7 +63,7 @@ while (true) {
     //pass the value from the  iostruct to the RTL port side
     
     r.write(ioDataStruct.r); 
-    std::cout<<"TLM_transactor - WRITING "<< ioDataStruct.r<<std::endl;
+    std::cout<<"TLM_transactor - WRITE: "<< ioDataStruct.r<<std::endl;
 	std::cout<<"TLM_transactor - "<< sc_simulation_time() <<" - "<<name()<<" - notify received"<<std::endl;
 
 	
@@ -82,7 +82,7 @@ while (true) {
 	
 	ioDataStruct.y=y.read();
 	
-	std::cout << "TLM_transactor - READING "<< y.read() << std::endl;
+	std::cout << "TLM_transactor - READ: "<< y.read() << std::endl;
 	
 	std::cout<<"TLM_transactor - "<< sc_simulation_time()<<" - "<<name()<<" - notify received"<<std::endl;
 	

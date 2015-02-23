@@ -15,10 +15,10 @@ void rtl_2_tdf::initialize(){
 	
 }
 void rtl_2_tdf::processing() {
-    std::cout<<"RTL_transactor - READ :"<<r_rtl.read()<< std::endl;
+    std::cout<<"RTL_transactor - READ: "<<r_rtl.read()<< std::endl;
 
     r_tdf.write( r_rtl.read() );
-    std::cout<<"RTL_transactor - WRITE :"<<y_tdf.read()<< std::endl;
+    std::cout<<"RTL_transactor - WRITE: "<<y_tdf.read()<< std::endl;
 
     y_rtl.write( y_tdf.read() );
 }

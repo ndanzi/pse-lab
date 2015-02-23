@@ -3,8 +3,8 @@
 
 System::System( sc_core::sc_module_name ) :
   testbench("testbench"),
-  tlm2rtl("tlm2rtl"),
-  rtl2tdf("rtl2tdf"),
+  tlm2rtl("TLM_transactor"),
+  rtl2tdf("RTL_transactor"),
   er("er"),
   ctrl("ctrl"),
   plt("plt")

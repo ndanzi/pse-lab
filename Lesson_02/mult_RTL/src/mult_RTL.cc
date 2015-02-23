@@ -1,7 +1,7 @@
 #include "mult_RTL.hh"
 
 void mult_RTL :: elaborate_MULT_FSM(void){
-  cout<<"\t"<<sc_time_stamp()<<" - root: MULT_FSM"<<endl;
+  cout<<"\t"<<sc_time_stamp()<<" - mult: MULT_FSM"<<endl;
   static sc_lv<11>   e1;
   static sc_lv<11>   e2;
   static sc_lv<64>   e;

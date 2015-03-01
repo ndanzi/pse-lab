@@ -19,9 +19,9 @@ void controller::initialize(){
 }
 void controller::processing() {
 
-	std::cout<<"controller - READ: " << e.read() << std::endl;
+	//std::cout<<"controller - READ: " << e.read() << std::endl;
 	k_calc = k_prec + ( 100 * ( e.read() - e_prec ) ) + ( get_timestep().to_seconds() * e.read() );
-	std::cout<<"controller - WRITE: " << k_calc << std::endl;
+	//std::cout<<"controller - WRITE: " << k_calc << std::endl;
 	k.write( k_calc );
 	e_prec = e.read();
 	k_prec = k_calc;

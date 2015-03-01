@@ -3,14 +3,14 @@
 set terminal postscript eps enhanced color font 'Helvetica,10'
 set output 'execution.eps'
 
-execution = 'log/outputs.dat'
+execution = 'log/execution.log'
 
-set xlabel "Time (s)"
-set ylabel "Values"
+set xlabel "x"
+set ylabel "y"
 
 plot \
-execution using 1:3 with lines title 'execution', \
-execution  using 1:2 with lines title 'reference'
+execution [0:360] using 1:3 with lines title 'execution', \
+execution [0:360] using 1:2 with lines title 'reference'
 
 
 

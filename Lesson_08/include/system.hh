@@ -33,7 +33,7 @@ class System : public sc_core::sc_module
   sc_signal<sc_uint<1> >    numbers_are_ready;
   sc_signal<sc_uint<1> >    result_is_ready;
   sc_signal<sc_lv<64> >     result;
-	sc_core::sc_signal < double >  r_rtl;
+	sc_core::sc_signal < sc_lv<64> >  r_rtl;
 	sc_core::sc_signal < double >  y_rtl;
 	
 	
@@ -44,7 +44,7 @@ class System : public sc_core::sc_module
 
   SC_HAS_PROCESS(System);
 
-  void clk_gen();
+
 	
 	
 	

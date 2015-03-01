@@ -2,16 +2,6 @@
 
 #define PERIOD 10
 
-void System::clk_gen()
-{
-  while( true )
-  {
-    clock.write( sc_dt::SC_LOGIC_1 );
-    wait( PERIOD / 2, sc_core::SC_NS );
-    clock.write( sc_dt::SC_LOGIC_0 );
-    wait( PERIOD / 2, sc_core::SC_NS );   
-  }
-}
 
 System::System( sc_core::sc_module_name ) :
   testbench("testbench"),
@@ -24,9 +14,9 @@ System::System( sc_core::sc_module_name ) :
   mult("mult")
 {
 
-  SC_THREAD( clk_gen );
+  testbench.clk( clock );
 
-  //TLM transactor
+  //TLM transactor from TLM to RTL
   //OUT
   tlm2rtl.number1( number1 );
   tlm2rtl.number2( number2 );
@@ -37,14 +27,14 @@ System::System( sc_core::sc_module_name ) :
   tlm2rtl.result( result );
   tlm2rtl.result_is_ready( result_is_ready );
 
-  //TLM transactor2 from AMS
+  //TLM transactor2 from AMS to TLM
   //IN
   tlm2ams.y( y_rtl );
+  //tlm2ams.clk( clock );
   //OUT
-  tlm2ams.r( r_rtl );
+  //tlm2ams.r( r_rtl );
 
-
-  //RTL mult
+  //RTL mult module
   //IN
   mult.clk(clock);
   mult.reset(reset_signal);
@@ -54,17 +44,17 @@ System::System( sc_core::sc_module_name ) :
   //OUT
   mult.result_port(result);
   mult.result_isready(result_is_ready);
-  //mult.r_port( r_rtl );
+  mult.r_port( r_rtl );
   
   //RTL SIDE
   //in
-  rtl2tdf.r_rtl( r_rtl );
+  rtl2tdf.r_rtl( r_rtl ); //result from RTL in bit
   //out
-  rtl2tdf.y_rtl( y_rtl );
+  rtl2tdf.y_rtl( y_rtl ); //goes to TLM
 
   //TDF SIDE
   //out
-  rtl2tdf.r_tdf( r );
+  rtl2tdf.r_tdf( r ); //result from RTL in bit
   //in
   rtl2tdf.y_tdf( y );  // y from plant
   

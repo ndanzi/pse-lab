@@ -25,7 +25,7 @@ private:
 	
 	// thread code
 	void run1();
-	void run2();
+	//void run2();
 
 public:
 
@@ -37,8 +37,11 @@ public:
   std::vector<double> n1;
   std::vector<double> n2;
   std::vector<double> results;
+	sc_out< sc_logic > 	clk;
 
   sc_event mult_provided;
+
+  void clk_gen();
   
   // constructor
   testbench_TLM(sc_module_name name);

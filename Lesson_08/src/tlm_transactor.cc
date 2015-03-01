@@ -19,7 +19,7 @@ tlm_2_rtl::tlm_2_rtl(sc_module_name name_)
 
 void tlm_2_rtl::b_transport(tlm::tlm_generic_payload& trans, sc_time& t)
 {
-  std::cout<<"TLM_transactor - " << sc_simulation_time()<<" - "<<name()<<" - b_transport"<<std::endl;
+  //std::cout<<"TLM_transactor1 - " << sc_simulation_time()<<" - "<<name()<<" - b_transport"<<std::endl;
   wait(0, SC_NS);
   tlm::tlm_command trans_command = trans.get_command();
 
@@ -31,7 +31,7 @@ void tlm_2_rtl::b_transport(tlm::tlm_generic_payload& trans, sc_time& t)
      
 	   trans.set_response_status(tlm::TLM_OK_RESPONSE);
 	   begin_write.notify();    
-	   std::cout<<"TLM_transactor - write notified"<<std::endl;
+	   //std::cout<<"TLM_transactor1 - write notified"<<std::endl;
 	   wait(end_write);    
   break;
 
@@ -39,7 +39,7 @@ void tlm_2_rtl::b_transport(tlm::tlm_generic_payload& trans, sc_time& t)
 	   ioDataStruct = *((iostruct*) trans.get_data_ptr());
 	   trans.set_response_status(tlm::TLM_OK_RESPONSE);
 	   begin_read.notify();
-	   std::cout<<"TLM_transactor - read notified"<<std::endl;
+	   //std::cout<<"TLM_transactor1 - read notified"<<std::endl;
 	   wait(end_read);
 	   *((iostruct*) trans.get_data_ptr()) = ioDataStruct;
   break;
@@ -48,7 +48,7 @@ void tlm_2_rtl::b_transport(tlm::tlm_generic_payload& trans, sc_time& t)
    break;
 
   }
-  std::cout<<"TLM_transactor - "<< sc_simulation_time()<<" - "<<name()<<" - b_transport ended"<<std::endl;
+ // std::cout<<"TLM_transactor1 - "<< sc_simulation_time()<<" - "<<name()<<" - b_transport ended"<<std::endl;
 }
 
 
@@ -62,13 +62,16 @@ void tlm_2_rtl::WRITEPROCESS()
   while (true) {
     
     	wait(begin_write);
-	    cout<<sc_simulation_time()<<" - "<<name()<<" - notify received - BEGIN WRITE"<<endl;
+	    //cout<<sc_simulation_time()<<" - "<<name()<<" - notify received - BEGIN WRITE (send numbers)"<<endl;
+      //write numbers to RTL mult module
 	    reset_to_rtl.write(1);
 	    number1.write(ioDataStruct.number1);
 	    number2.write(ioDataStruct.number2);
 	    numbers_are_ready.write(1);
-	    end_write.notify();
+      end_write.notify();
 	    wait();
+      wait();
+	    numbers_are_ready.write(0);
   }
 }
 
@@ -85,8 +88,8 @@ void tlm_2_rtl::READPROCESS()
     while(result_is_ready.read() != 1)
 		  wait();
 	  ioDataStruct.result=result.read();
-	
-	  std::cout<<"TLM_transactor - "<< sc_simulation_time()<<" - "<<name()<<" - notify received - BEGIN READ (result is ready)"<<std::endl;
+	  //numbers_are_ready.write(0);
+	  //std::cout<<"TLM_transactor1 - "<< sc_simulation_time()<<" - "<<name()<<" - notify received - BEGIN READ (result is ready)"<<std::endl;
 	
 	  end_read.notify(); 
   }
@@ -101,7 +104,7 @@ void tlm_2_rtl :: end_of_elaboration(){
 }
 
 void tlm_2_rtl :: reset(){
-  cout<<sc_simulation_time()<<" - "<<name()<<" - reset"<<endl; 
+  //cout<<sc_simulation_time()<<" - "<<name()<<" - reset"<<endl; 
   reset_to_rtl.write(0);
   numbers_are_ready.write(0);
   number1.write(0);

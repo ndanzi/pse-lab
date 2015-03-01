@@ -11,7 +11,7 @@ SC_MODULE(mult_RTL){
   sc_in<sc_lv<64> >     number1_port;
   sc_in<sc_lv<64> >     number2_port;
   sc_out<sc_lv<64> >    result_port;
-  //sc_out<sc_lv<64> >    r_port;
+  sc_out<sc_lv<64> >    r_port;
   sc_out<sc_uint<1> >   result_isready;
   sc_in<bool>           reset;
   sc_in< sc_dt::sc_logic > clk;

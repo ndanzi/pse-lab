@@ -21,6 +21,9 @@ void mult_RTL :: elaborate_MULT_FSM(void){
   if (reset.read() == 0){
     //cout<< "\t" <<sc_time_stamp()<< " - mult: reset" << endl;
     STATUS = Reset_ST;
+    result_port.write(0);
+    r_port.write(0);
+    result_isready.write(0);
   }
   else if (clk.read() == 1) {
 
@@ -33,6 +36,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         //cout<< "\t" <<sc_time_stamp()<< "mult: ST_reset" << endl;
         
         result_port.write(0);
+        r_port.write(0);
         result_isready.write(0);
         overflow.write(false);
         stop_m_mult.write(false);
@@ -45,6 +49,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         //cout<< "\t" <<sc_time_stamp()<< "mult: ST_0" << endl;
         
         result_port.write(0);
+        //r_port.write(0);
         result_isready.write(0);
         overflow.write(false);
         stop_m_mult.write(false);
@@ -238,7 +243,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         //cout << "exp overflow = " << overflow.read() << endl;
         result_isready.write(1);
         result_port.write( result );
-        //r_port.write( result );
+        r_port.write( result );
         break;
         
       

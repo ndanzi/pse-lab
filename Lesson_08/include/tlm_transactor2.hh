@@ -32,7 +32,8 @@ class tlm_2_ams
 	sc_core::sc_in < double >  y;
 
 	//output for tdf_2_rtl
-	sc_core::sc_out< double > r;
+	//sc_core::sc_out< double > r;
+  //sc_core::sc_in<sc_logic >     clk;
   
 
   //processes

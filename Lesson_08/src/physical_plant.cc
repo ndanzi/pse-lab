@@ -25,9 +25,6 @@ plant::plant(sc_core::sc_module_name) :
   lsf2tdf.x(sig2);
   lsf2tdf.outp(y);
     
-    
-
-    
 }
 
 plant::~plant() {

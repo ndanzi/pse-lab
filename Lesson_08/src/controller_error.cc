@@ -9,13 +9,15 @@ void error::set_attributes() {
 
   set_timestep( 20.0, sc_core::SC_MS);
     e.set_delay(1.0);
+    //y.set_delay(1.0);
 }
 
 void error::initialize(){
 	e.initialize(0.0);
+	//y.initialize(0.0);
 }
 void error::processing() {
-	std::cout<< "controller error - READ: " << r.read() <<std::endl;
+	//std::cout<< "controller error - READ: " << r.read() <<std::endl;
     e.write(( r.read() - y.read() ), 0 );
-    std::cout<< "controller error - WRITE: " << ( r.read() - y.read() ) <<std::endl;
+    //std::cout<< "controller error - WRITE: " << ( r.read() - y.read() ) <<std::endl;
 }

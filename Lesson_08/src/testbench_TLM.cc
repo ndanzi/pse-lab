@@ -1,5 +1,20 @@
 #include "testbench_TLM.hh"
+#include <math.h>      
 
+#define PERIOD 100000
+
+#define PI 3.14159265
+
+void testbench_TLM::clk_gen()
+{
+  while( true )
+  {
+    clk.write( sc_dt::SC_LOGIC_1 );
+    wait( PERIOD / 2, sc_core::SC_NS );
+    clk.write( sc_dt::SC_LOGIC_0 );
+    wait( PERIOD / 2, sc_core::SC_NS );   
+  }
+}
 
 // constructor to initialize the TLM socket and the main thread
 testbench_TLM::testbench_TLM(sc_module_name name)
@@ -9,7 +24,8 @@ testbench_TLM::testbench_TLM(sc_module_name name)
   initiator_socket1(*this);
   initiator_socket2(*this);
   SC_THREAD(run1);
-  SC_THREAD(run2);
+	sensitive << clk.pos();
+  SC_THREAD( clk_gen );
   
   //OPERATOR 1
 	/*std::ifstream ifile("log/reference.log", std::ios::in);
@@ -29,14 +45,15 @@ testbench_TLM::testbench_TLM(sc_module_name name)
 	
 	*/
 
- 
+  m_qk.set_global_quantum(sc_time(500, SC_NS));
+  m_qk.reset();
 
   srand(time(NULL));
 
-  for (int i = 1; i <= 128; i++){
+  for (int i = 1; i <= 360; i++){
 
-    testbench_TLM::n1.push_back((rand() % 256000 - 128000) / 1000.0);
-    testbench_TLM::n2.push_back((rand() % 256000 - 128000) / 1000.0);
+    testbench_TLM::n1.push_back(i*sin(i*PI/180.0));
+    testbench_TLM::n2.push_back(1.0/i);
 
   }
 
@@ -54,6 +71,7 @@ tlm::tlm_sync_enum testbench_TLM::nb_transport_bw(tlm::tlm_generic_payload &  tr
   return tlm::TLM_COMPLETED;
 }
 
+//functions to convert lv to double or viceversa
 sc_dt::sc_lv< 64 > doubleToLogicVector( double d )
 {
     uint64_t tmp = *reinterpret_cast< uint64_t * >(&d);
@@ -73,15 +91,20 @@ void testbench_TLM::run1()
   sc_core::sc_time local_time;
   iostruct mult_packet;
   tlm::tlm_generic_payload mult_payload;	
+  iostruct plant_packet;
+  tlm::tlm_generic_payload plant_payload;	
+  int delay = 0;
+	ofstream log;
+	log.open("log/execution.log", ios::trunc);
 
   local_time = m_qk.get_local_time();
-  std::cout << "tb - run1 - size :"<<sc_simulation_time()<<" - "<<name()<<" - run"<<std::endl;
+  //std::cout << "tb - run1 - size :"<<sc_simulation_time()<<" - "<<name()<<" - run"<<std::endl;
 
-  for(int i = 0; i < 128; i++) {
+  for(int i = 0; i < 360; i++) {
     mult_packet.number1 = doubleToLogicVector(testbench_TLM::n1[i]);
     mult_packet.number2 = doubleToLogicVector(testbench_TLM::n2[i]);
 
-    cout<<"\tThe multiplication between "<< testbench_TLM::n1[i] << " and " << testbench_TLM::n2[i] << endl;
+    cout<<"\t\t\tThe multiplication n " << i <<" multiplication between "<< testbench_TLM::n1[i] << " and " << testbench_TLM::n2[i] << endl;
     mult_payload.set_data_ptr((unsigned char*) &mult_packet);
     mult_payload.set_address(0);
     mult_payload.set_write();
@@ -91,78 +114,67 @@ void testbench_TLM::run1()
     // start write transaction
     initiator_socket1->b_transport(mult_payload, local_time);
 
-    // start read transaction
+    // start read transaction mult
     mult_payload.set_read();
     initiator_socket1->b_transport(mult_payload, local_time);
 
 
     if(mult_payload.get_response_status() == tlm::TLM_OK_RESPONSE){
       testbench_TLM::results.push_back(logicVectorToDouble(mult_packet.result));
-      cout<< "... is: " << testbench_TLM::results[i] << endl;
-	    mult_provided.notify(); 
+      cout<< "\t\t\tresult of multiplication n " << i << "... is: " << testbench_TLM::results[i] << endl;
+	    //mult_provided.notify(); 
+    }
+
+
+    // start read transaction plant
+    plant_payload.set_data_ptr((unsigned char*) &plant_packet);
+    plant_payload.set_address(0);
+    plant_payload.set_write();
+
+    local_time = m_qk.get_local_time();
+    //cout << "TLM : got local time" << endl;
+
+    initiator_socket2->b_transport(plant_payload, local_time);
+    plant_payload.set_read();
+    initiator_socket2->b_transport(plant_payload, local_time);
+
+
+
+
+    if(plant_payload.get_response_status() == tlm::TLM_OK_RESPONSE){
+      cout<< "y: " << plant_packet.y << endl;
+      if(plant_packet.y == 0) {
+        delay++;
+        cout << "delay = " << delay << endl;
+      } else {
+        cout << "result = " << testbench_TLM::results[i - delay] << endl;
+        cout << "threshold = " << (testbench_TLM::results[i - delay] - plant_packet.y)/testbench_TLM::results[i - delay] << endl;
+        log << i << " " << testbench_TLM::results[i - delay] << " " << plant_packet.y << endl;
+        if((testbench_TLM::results[i - delay] - plant_packet.y)/testbench_TLM::results[i - delay] > 0.1) {
+           std::cout<<"\033[31m"<<"ERROR!!!"<<"\033[0m"<< std::endl;
+        }
+      }
     }
 
 
 
-    cout << "Time: " << sc_time_stamp() << " + " << local_time << endl;
+
+
+    //cout << "Time: " << sc_time_stamp() << " + " << local_time << endl;
     m_qk.set(local_time);
     if (m_qk.need_sync()) {
-      cout << "SYNCHRONIZING" << endl;
+      //cout << "SYNCHRONIZING" << endl;
       m_qk.sync();
-      cout << "#####################" << endl;
+      //cout << "#####################" << endl;
     }
+    //cout << "TLM : wait 80 ms" << endl;
+  	wait(80,SC_MS);
+    //cout << "TLM : waited" << endl;
   }
-  
-}
-void testbench_TLM::run2()
-{
-
-  sc_core::sc_time local_time;
-  iostruct packet;
-  tlm::tlm_generic_payload payload;
-
-  local_time = m_qk.get_local_time();
-  std::cout << "tb - run2 - size :"<<sc_simulation_time()<<" - "<<name()<<" - run"<<std::endl;
-	
-  for(int i = 0; i < 128; i++)
-  {
-    wait(mult_provided);
-		packet.r = results[i] ;
-		std::cout << "tb - size :"<<sc_simulation_time()<<" - "<<name()<<" - run"<<std::endl;
-		payload.set_data_ptr((unsigned char*) &packet); // set payload data
-		payload.set_address(0); // set address, 0 here since we have only 1 target and 1 initiator 
-		payload.set_write(); // write transaction
-		
-		// update the local time variable to send it to the target
-		local_time = m_qk.get_local_time();
-		std::cout<<"tb - WRITING "<<packet.r <<std::endl;
-		std::cout<<"tb - " << i <<" Invoking the b_transport primitive - write"<<std::endl;
-		initiator_socket2->b_transport(payload, local_time); // invoke the transport primitive
-		
-		
-		// start read transaction
-		payload.set_read();
-    initiator_socket2->b_transport(payload, local_time);
-		
-		
-    if(payload.get_response_status() == tlm::TLM_OK_RESPONSE){
-      cout<< "y: " << packet.y << endl;
-    }
-		
-		
-		std::cout << "tb - Time: " << sc_time_stamp() << " + " << local_time << std::endl;
-		m_qk.set(local_time);
-		if (m_qk.need_sync()) {
-			// synchronize simulation time
-			cout << "SYNCHRONIZING" << endl;
-			m_qk.sync();
-			cout << "#####################" << endl;
-		}
-	  wait(40,SC_MS);
-  }
-  // send one random number - write invocation
-
   sc_stop();
 
+
+  
 }
+
 

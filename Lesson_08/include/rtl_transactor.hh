@@ -8,7 +8,7 @@ SCA_TDF_MODULE(rtl_2_tdf) {
     
         // INPUT
         // port from RTL interface, tlm2rtl RTL Side
-        sca_tdf::sca_de::sca_in<double >		r_rtl;  //from mult_RTL sc module
+        sca_tdf::sca_de::sca_in<sc_dt::sc_lv<64> >		r_rtl;  //from mult_RTL sc module
 		    // port from plant
         sca_tdf::sca_in<double>				    y_tdf; // from plant tdf lsf module. converted in tdf input
 

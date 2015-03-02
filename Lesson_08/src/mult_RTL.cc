@@ -73,6 +73,7 @@ void mult_RTL :: elaborate_MULT_FSM(void){
         r = 0;
         number1_tmp = 0;
         number2_tmp = 0;
+
         break;
         
       //take the numbers

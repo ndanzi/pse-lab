@@ -29,7 +29,7 @@ void mult_AT4_testbench::run()
   cout << "\tnumber1:\t" << n1 << endl;
   cout << "\tnumber2:\t" << n2 << endl;
 
-  cout<<"[TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
   
   // set phase: begin request
   tlm::tlm_phase phase = tlm::BEGIN_REQ;
@@ -39,7 +39,7 @@ void mult_AT4_testbench::run()
   payload.set_data_ptr((unsigned char*) &mult_packet);
   payload.set_write();
 
-  cout<<"[TB:] Invoking the nb_transport_fw primitive of mult - write"<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Invoking the nb_transport_fw primitive of mult - write"<<endl;
   tlm::tlm_sync_enum result = initiator_socket->nb_transport_fw(payload, phase, local_time);  // invoke the transport primitive
                                                                                               // pass also the phase
 
@@ -47,7 +47,7 @@ void mult_AT4_testbench::run()
     // If the target immediately completes the transaction something
     // wrong happened. We should inspect the response status and
     // take appropriate actions. In this case we just stop the simulation.
-    cout << "[ERROR:] Transaction error on nb_transport_fw. Forcing simulation stop." << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [ERROR:] Transaction error on nb_transport_fw. Forcing simulation stop." << endl;
     sc_stop();
   }
 
@@ -55,11 +55,11 @@ void mult_AT4_testbench::run()
   // it accepted the request
   // else, there is something wrong in the protocol
   if (phase != tlm::END_REQ) {
-    cout << "[ERROR: ] Unexpected protocol phase on nb_transport_fw. Forcing simulation stop." << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [ERROR: ] Unexpected protocol phase on nb_transport_fw. Forcing simulation stop." << endl;
     sc_stop();
   }
 
-  cout<<"[TB:] Waiting for nb_transport_bw to be invoked "<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Waiting for nb_transport_bw to be invoked "<<endl;
   response_pending = true; // we have one request pending
   wait(available_response); // thus we suspend until the protocol is finished
   
@@ -72,20 +72,20 @@ void mult_AT4_testbench::run()
   payload.set_data_ptr((unsigned char*) &mult_packet);
   payload.set_read();
   
-  cout<<"[TB:] Invoking the nb_transport_fw primitive of mult - read"<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Invoking the nb_transport_fw primitive of mult - read"<<endl;
   result = initiator_socket->nb_transport_fw(payload, phase, local_time);
 
   if (result == tlm::TLM_COMPLETED) {
-    cout << "[ERROR:] Transaction error on nb_transport_fw. Forcing simulation stop." << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [ERROR:] Transaction error on nb_transport_fw. Forcing simulation stop." << endl;
     sc_stop();
   }
 
   if (phase != tlm::END_REQ) {
-    cout << "[ERROR: ] Unexpected protocol phase on nb_transport_fw. Forcing simulation stop." << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [ERROR: ] Unexpected protocol phase on nb_transport_fw. Forcing simulation stop." << endl;
     sc_stop();
   }
 
-  cout<<"[TB:] Waiting for nb_transport_bw to be invoked "<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Waiting for nb_transport_bw to be invoked "<<endl;
   response_pending = true;
   wait(available_response);
 
@@ -94,9 +94,9 @@ void mult_AT4_testbench::run()
   response_pending = false;    
 
   if(payload.get_response_status() == tlm::TLM_OK_RESPONSE){
-    cout<<"[TB:] TLM protocol correctly implemented"<<endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [TB:] TLM protocol correctly implemented"<<endl;
     result_mult = logicVectorToDouble(mult_packet.result);
-    cout<<"[TB:] Result is: " << result_mult << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [TB:] Result is: " << result_mult << endl;
   }
  
   sc_stop();
@@ -109,14 +109,14 @@ tlm::tlm_sync_enum mult_AT4_testbench::nb_transport_bw(tlm::tlm_generic_payload 
   // If response_pending is true, then the initiator had made a request to the target
   // and this invocation is the answer
   if (!response_pending) {
-    cout << "[ERROR:] Unexpected state for nb_transport_be" << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [ERROR:] Unexpected state for nb_transport_be" << endl;
     trans.set_response_status(tlm::TLM_GENERIC_ERROR_RESPONSE);
     return tlm::TLM_COMPLETED;
   }
   
   // The phase of the invocation must be begin response, or there is some error in the protocol
   if (phase != tlm::BEGIN_RESP) {
-    cout << "[ERROR:] Unexpected phase for nb_transport_be" << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [ERROR:] Unexpected phase for nb_transport_be" << endl;
     trans.set_response_status(tlm::TLM_GENERIC_ERROR_RESPONSE);
     return tlm::TLM_COMPLETED;
   }

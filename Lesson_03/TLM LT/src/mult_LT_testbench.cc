@@ -30,7 +30,7 @@ void mult_LT_testbench::run()
   cout << "\tnumber1:\t" << n1 << endl;
   cout << "\tnumber2:\t" << n2 << endl;
 
-  cout<<"[TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
   payload.set_data_ptr((unsigned char*) &mult_packet);
   payload.set_address(0);
   payload.set_write();
@@ -38,15 +38,15 @@ void mult_LT_testbench::run()
   // update the local time variable to send it to the target
   local_time = m_qk.get_local_time();
 
-  cout<<"[TB:] Invoking the b_transport primitive - write"<<endl;                         
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Invoking the b_transport primitive - write"<<endl;                         
   initiator_socket->b_transport(payload, local_time); // invoke the transport primitive
   
     if(payload.get_response_status() == tlm::TLM_OK_RESPONSE){
       // check that the protocol has been correctly implemented
       // and print the result
-      cout<<"[TB:] TLM protocol correctly implemented"<<endl;
+      cout<< "\t" <<sc_time_stamp()<< " - [TB:] TLM protocol correctly implemented"<<endl;
       result = logicVectorToDouble(mult_packet.result);
-      cout<<"[TB:] Result is: " << result << endl;
+      cout<< "\t" <<sc_time_stamp()<< " - [TB:] Result is: " << result << endl;
   }
 
   // temporal decoupling> get time and check if we have to synchronize with the target 

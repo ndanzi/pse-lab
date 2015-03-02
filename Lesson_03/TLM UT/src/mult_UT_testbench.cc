@@ -40,20 +40,20 @@ void mult_UT_testbench::run()
   //cout << "\tnumber1:\t" << n1 << endl;
   //cout << "\tnumber2:\t" << n2 << endl;
 
-  cout<<"[TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Calculating the product between "<<n1<<" and "<<n2<<endl;
   payload.set_data_ptr((unsigned char*) &mult_packet); // set payload data
   payload.set_address(0); // set address, 0 here since we have only 1 target and 1 initiator 
   payload.set_write(); // write transaction
 
-  cout<<"[TB:] Invoking the b_transport primitive - write"<<endl;
+  cout<< "\t" <<sc_time_stamp()<< " - [TB:] Invoking the b_transport primitive - write"<<endl;
   initiator_socket->b_transport(payload, local_time); // invoke the transport primitive
 
   if(payload.get_response_status() == tlm::TLM_OK_RESPONSE){
     // check that the protocol has been correctly implemented
     // and print the result
-    cout<<"[TB:] TLM protocol correctly implemented"<<endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [TB:] TLM protocol correctly implemented"<<endl;
     result = logicVectorToDouble(mult_packet.result);
-    cout<<"[TB:] Result is: " << result << endl;
+    cout<< "\t" <<sc_time_stamp()<< " - [TB:] Result is: " << result << endl;
   }
   sc_stop();
   

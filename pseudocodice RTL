@@ -1,13 +1,17 @@
-
-
+BEGIN
+#inizializzazione:
+...
 -----------
+#recupero di mantissa esponente e segno:
 e = e_1 + e_2 - 1023
-m_1 = 1+(m_1>>1)
-m_2 = 1+(m_2>>1)
+m_1 = 1 + m_1
+m_2 = 1 + m_2
 m = 0
 -----------
-controllo overflow di e
+#controllo overflow di e:
+...
 -----------
+#moltiplicazione delle mantisse:
 while(m_2 != 0)
 ----------
         if(m_2[0] != 0)
@@ -15,8 +19,10 @@ while(m_2 != 0)
         m_1 = m_1 << 1;
         m_2 = m_2 >> 1;
 ----------
-while(m.range(63, 53) != 0 && m[52] != 1) /*finchè non è normalizzato*/
-        m = m + m[0]
+#normalizzazione:
+while(m.range(63, 53) != 0 && m[52] != 1)
+        r = m[0];
+        sticky_bit = sticky_bit OR r;
 ----------
         m = m >> 1; 
         if(e != max_e)
@@ -24,13 +30,20 @@ while(m.range(63, 53) != 0 && m[52] != 1) /*finchè non è normalizzato*/
         else
             overflow;
 ---------
-if( e < min_e)
-        underflow
-tolgo l'1 aggiunto
+#fine normalizzazione:
+      if(r == "1" && sticky_bit == "1")
+            m = m + 1;
+      else if(sticky_bit == "0" && r == "1" && m[0] == 1)
+            m = m + 1;
+---------
+#calcolo del segno e esponente:
+      e = e - 52;
+      s = s1 XOR s2;
+---------
+#assegnamento del risultato:
+...
+--------
+END
 
-if(s_1 == s_2)
-        s = 0;
-else
-        s = 1;
 
         

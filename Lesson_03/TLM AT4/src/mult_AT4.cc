@@ -17,8 +17,8 @@ tlm::tlm_sync_enum mult_AT4::nb_transport_fw(tlm::tlm_generic_payload& trans, tl
     return tlm::TLM_COMPLETED;
   }
 
-  cout<<"\t\t[MULT:] Received invocation of the nb_transport_fw primitive"<<endl;
-  cout<<"\t\t[MULT:] Activating the IOPROCESS"<<endl;
+  cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] Received invocation of the nb_transport_fw primitive"<<endl;
+  cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] Activating the IOPROCESS"<<endl;
   pending_transaction = &trans; // download the payload
   ioDataStruct = *((iostruct*) trans.get_data_ptr()); // get the data
 
@@ -28,7 +28,7 @@ tlm::tlm_sync_enum mult_AT4::nb_transport_fw(tlm::tlm_generic_payload& trans, tl
   io_event.notify();
   
   // return control 
-  cout<<"\t\t[MULT:] End of the nb_transport_fw primitive"<<endl;
+  cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] End of the nb_transport_fw primitive"<<endl;
   return tlm::TLM_UPDATED;
   
 }
@@ -43,7 +43,7 @@ void mult_AT4::IOPROCESS()
     wait(io_event);
     // if I am here, then the initiator has invoked the forward transport primitive to issue a request 
     
-    cout<<"\t\t[MULT:] IOPROCESS has been activated"<<endl;
+    cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] IOPROCESS has been activated"<<endl;
     
     // Wait 100ns to model the delay required to
     // process the request - simulate advamncement of time
@@ -52,12 +52,12 @@ void mult_AT4::IOPROCESS()
 
     if (pending_transaction->is_write()) {
       // write request: elaborate the square mult and return
-      cout<<"\t\t[MULT:] Invoking the mult_function to calculate the product"<<endl;
+      cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] Invoking the mult_function to calculate the product"<<endl;
       mult_function();
     }
     
     // read transaction: return the result to the initiator
-    else cout<<"\t\t[MULT:] Returning result: "<<ioDataStruct.result<<endl;
+    else cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] Returning result: "<<ioDataStruct.result<<endl;
     
     // transaction went on correctly
     pending_transaction->set_response_status(tlm::TLM_OK_RESPONSE);
@@ -66,7 +66,7 @@ void mult_AT4::IOPROCESS()
     *((iostruct*) pending_transaction->get_data_ptr()) = ioDataStruct;
     tlm::tlm_phase phase = tlm::BEGIN_RESP;
     
-    cout<<"[TB:] Invoking the nb_transport_bw primitive - write"<<endl;
+    cout<< "\t\t" <<sc_time_stamp()<< " - [TB:] Invoking the nb_transport_bw primitive - write"<<endl;
     target_socket->nb_transport_bw(*pending_transaction, phase, timing_annotation); // transport primitive in the initiator - ends the AT4 protocol
 
     pending_transaction = NULL;
@@ -78,7 +78,7 @@ void mult_AT4::IOPROCESS()
 // elaboration function
 void mult_AT4:: mult_function()
 {
-  cout<<"\t\t[MULT:] Calculating mult_function ... "<<endl;
+  cout<< "\t\t" <<sc_time_stamp()<< " - [MULT:] Calculating mult_function ... "<<endl;
   double n1, n2, result;
    
   uint64_t tmp;

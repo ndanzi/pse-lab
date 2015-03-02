@@ -24,6 +24,7 @@ testbench_TLM::testbench_TLM(sc_module_name name)
     while (ifile >> num) {
         testbench_TLM::input_reference.push_back(num);
     }
+
 	
 	
 

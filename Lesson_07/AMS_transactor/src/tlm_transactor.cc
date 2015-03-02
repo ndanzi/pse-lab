@@ -64,7 +64,7 @@ while (true) {
     
     r.write(ioDataStruct.r); 
     std::cout<<"TLM_transactor - WRITE: "<< ioDataStruct.r<<std::endl;
-	std::cout<<"TLM_transactor - "<< sc_simulation_time() <<" - "<<name()<<" - notify received"<<std::endl;
+	  std::cout<<"TLM_transactor - "<< sc_simulation_time() <<" - "<<name()<<" - notify received"<<std::endl;
 
 	
 	end_write.notify();

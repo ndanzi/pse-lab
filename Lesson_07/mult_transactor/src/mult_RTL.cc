@@ -32,8 +32,8 @@ void mult_RTL :: elaborate_MULT_FSM(void){
       case Reset_ST:
         //cout<< "\t" <<sc_time_stamp()<< "mult: ST_reset" << endl;
         
-        result_port.write('0');
-        result_isready.write('0');
+        result_port.write(0);
+        result_isready.write(0);
         overflow.write(false);
         stop_m_mult.write(false);
         normalized.write(false);
@@ -44,8 +44,8 @@ void mult_RTL :: elaborate_MULT_FSM(void){
       case ST_0:
         //cout<< "\t" <<sc_time_stamp()<< "mult: ST_0" << endl;
         
-        result_port.write('0');
-        result_isready.write('0');
+        result_port.write(0);
+        result_isready.write(0);
         overflow.write(false);
         stop_m_mult.write(false);
         normalized.write(false);
